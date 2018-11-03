@@ -131,8 +131,8 @@ function doWhatItSays () {
 
 /////////////////////////////////////////////////
 function logInfo (command, dataItem) {
-    let text = command + ": " + dataItem;
-    fs.appendFile("CommandLog.txt", text, "utf8", function(err) {
+    let text = command + ": " + dataItem +"\n";
+    fs.appendFile("log.txt", text, "utf8", function(err) {
 
         // If an error was experienced we will log it.
         if (err) {
@@ -145,5 +145,5 @@ function logInfo (command, dataItem) {
         }
     
     });
-}
+};
 /////////////////////////////////////////////////
