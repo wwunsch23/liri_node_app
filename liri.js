@@ -16,6 +16,7 @@ function doWhat (command,dataItem) {
     } else if (command === "do-what-it-says") {
         doWhatItSays();
     }
+    logInfo(command,dataItem);
 };
 
 
@@ -126,7 +127,23 @@ function doWhatItSays () {
         doWhat(fileCommand,fileInfo);
     });
 };
-//////////////////////////////////////////////////
+/////////////////////////////////////////////////
 
+/////////////////////////////////////////////////
+function logInfo (command, dataItem) {
+    let text = command + ": " + dataItem;
+    fs.appendFile("CommandLog.txt", text, "utf8", function(err) {
 
-
+        // If an error was experienced we will log it.
+        if (err) {
+        console.log(err);
+        }
+    
+        // If no error is experienced, we'll log the phrase "Content Added" to our node console.
+        else {
+        console.log("Log file updated.");
+        }
+    
+    });
+}
+/////////////////////////////////////////////////
