@@ -3,10 +3,23 @@ require("dotenv").config();
 var keys = require("./keys.js");
 var request = require('request');
 var Spotify = require('node-spotify-api');
+var fs = require("fs");
+
+function doWhat (command,dataItem) {
+    if (command === "movie-this") {
+        movieInfo(dataItem);
+    } else if (command === "spotify-this-song") {
+        spotifySong(dataItem);
+    } else if (command === "do-what-it-says") {
+        doWhatItSays();
+    }
+};
 
 
 //Set command variable
 let command = process.argv[2];
+let dataItem = process.argv.slice(3).join("+");
+doWhat(command,dataItem);
 
 
 /////////////////////////////////////////////////////
@@ -24,9 +37,9 @@ let command = process.argv[2];
 /////////////////////////////////////////////////////
 // node liri.js spotify-this-song '<song name here>'
 
-function spotifySong () {
+function spotifySong (trackName) {
     var spotify = new Spotify(keys.spotify);
-    let trackName = process.argv.slice(3).join("+");
+    //let trackName = process.argv.slice(3).join("+");
 
     if (!trackName) {
         trackName = "The Sign";
@@ -53,8 +66,8 @@ function spotifySong () {
 /////////////////////////////////////////////////
 // node liri.js movie-this '<movie name here>'
 
-function movieInfo () {
-    let movieName = process.argv.slice(3).join("+");
+function movieInfo (movieName) {
+    //let movieName = process.argv.slice(3).join("+");
 
     if (!movieName) {
         movieName = "Mr. Nobody";
@@ -85,14 +98,30 @@ function movieInfo () {
 // node liri.js do-what-it-says
 
 // Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
+function doWhatItSays () {
+    fs.readFile("random.txt", "utf8", function(error, data) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (error) {
+        return console.log(error);
+        }
+        
+        // Then split it by commas (to make it more readable)
+        const fileCommand = data.split(",")[0];
+        const fileInfo = data.split(",")[1]
+
+        doWhat(fileCommand,fileInfo);
+
+    
+        
+    });
+}
+  
 
 // It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
 
 // Edit the text in random.txt to test out the feature for movie-this and concert-this.
 //////////////////////////////////////////////////
 
-if (command === "movie-this") {
-    movieInfo();
-} else if (command === "spotify-this-song") {
-    spotifySong();
-}
+
+
