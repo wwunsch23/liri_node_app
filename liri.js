@@ -3,6 +3,7 @@ require("dotenv").config();
 var keys = require("./keys.js");
 var request = require('request');
 var Spotify = require('node-spotify-api');
+var moment = require('moment');
 var fs = require("fs");
 
 function doWhat (command,dataItem) {
@@ -10,28 +11,41 @@ function doWhat (command,dataItem) {
         movieInfo(dataItem);
     } else if (command === "spotify-this-song") {
         spotifySong(dataItem);
+    } else if (command === "concert-this") {
+        bandEvent(dataItem);
     } else if (command === "do-what-it-says") {
         doWhatItSays();
     }
 };
 
 
-//Set command variable
+//Set process.argv variables
 let command = process.argv[2];
 let dataItem = process.argv.slice(3).join("+");
 doWhat(command,dataItem);
 
 
 /////////////////////////////////////////////////////
-// node liri.js concert-this <artist/band name here>
+function bandEvent (artistName) {
 
-// This will search the Bands in Town Artist Events API ("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp") for an artist and render the following information about each event to the terminal:
+    if (!artistName) {
+        console.log("You must enter an artist to search for.")
+    } else {
+        var queryUrl = "https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp";
 
-// Name of the venue
+        request(queryUrl, function(error, response, body) {
 
-// Venue location
-
-// Date of the Event (use moment to format this as "MM/DD/YYYY")
+        // If the request is successful (i.e. if the response status code is 200)
+            if (!error && response.statusCode === 200) {
+                let firstConcert = JSON.parse(body)[0];
+                console.log("Venue Name: "+firstConcert.venue.name);
+                console.log("Venue Location: "+firstConcert.venue.city+", "+firstConcert.venue.country);
+                let convertedDate = moment(firstConcert.datetime).format("dddd, MMM DD YYYY");
+                console.log("Date: "+convertedDate);
+            }
+    });
+    };
+}    
 //////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////
@@ -67,7 +81,6 @@ function spotifySong (trackName) {
 // node liri.js movie-this '<movie name here>'
 
 function movieInfo (movieName) {
-    //let movieName = process.argv.slice(3).join("+");
 
     if (!movieName) {
         movieName = "Mr. Nobody";
@@ -91,7 +104,7 @@ function movieInfo (movieName) {
         console.log("Actors: "+JSON.parse(body).Actors);
     }
     });
-}
+};
 ////////////////////////////////////////////////
 
 ////////////////////////////////////////////////
@@ -111,16 +124,8 @@ function doWhatItSays () {
         const fileInfo = data.split(",")[1]
 
         doWhat(fileCommand,fileInfo);
-
-    
-        
     });
-}
-  
-
-// It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-
-// Edit the text in random.txt to test out the feature for movie-this and concert-this.
+};
 //////////////////////////////////////////////////
 
 
