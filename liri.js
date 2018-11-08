@@ -94,7 +94,7 @@ function movieInfo (movieName) {
 
     // If the request is successful (i.e. if the response status code is 200)
     if (!error && response.statusCode === 200) {
-        console.log(JSON.parse(body));
+        //console.log(JSON.parse(body));
         console.log("Movie Title: "+JSON.parse(body).Title);
         console.log("Year: "+JSON.parse(body).Year);
         console.log("IMDB Rating: "+JSON.parse(body).Ratings[0].Value);
@@ -141,7 +141,7 @@ function logInfo (command, dataItem) {
     
         // If no error is experienced, we'll log the phrase "Content Added" to our node console.
         else {
-        console.log("Log file updated.");
+            console.log("Log file updated.");
         }
     
     });
